@@ -124,6 +124,10 @@
       color: #f87171;
     }
 
+    .cheat {
+      color: #fbbf24;
+    }
+
     /* Stage 2 container - hidden by default */
     #stage2 {
       display: none;
@@ -159,19 +163,40 @@
     <!-- Hidden Stage 2 Content -->
     <div id="stage2">
       <h2 style="color: #4ade80; margin-bottom: 10px;">Correct! Stage 1 Passed.</h2>
-      <p style="color: #cbd5e1;">Here is your key for Stage 2:</p>
-      <p style="margin-top: 10px; font-weight: bold; color: #38bdf8;">ROT1</p>
+      <p style="color: #cbd5e1;">Here is your key for Stage 2 (in ROT1):</p>
+      <p style="margin-top: 10px; font-weight: bold; color: #38bdf8; font-family: monospace; font-size: 1.2rem;">
+        tubhf3-tfdsfu-ofyts-fqu.wfstfm.bqq
+      </p>
     </div>
   </div>
 
   <script>
+    // Lightweight hashing function to protect against F12 inspection spoilers
+    function hashString(str) {
+      let hash = 5381;
+      for (let i = 0; i < str.length; i++) {
+        hash = (hash * 33) ^ str.charCodeAt(i);
+      }
+      return (hash >>> 0).toString(16);
+    }
+
     function checkAnswer() {
       const input = document.getElementById("answer").value.trim().toLowerCase();
       const messageDiv = document.getElementById("message");
       const stage2Div = document.getElementById("stage2");
 
-      // Check if answer matches "naggers"
-      if (input === "naggers") {
+      const inputHash = hashString(input);
+
+      // Check for the ROT1 cheat attempt 'obhhfst'
+      if (input === "obhhfst") {
+        messageDiv.className = "cheat";
+        messageDiv.textContent = "Nice try inspect element user! Decode it backward first!";
+        stage2Div.style.display = "none";
+        return;
+      }
+
+      // Hash for 'naggers' -> "8290f84f"
+      if (inputHash === "8290f84f") {
         messageDiv.className = "success";
         messageDiv.textContent = "ACCESS GRANTED!";
         stage2Div.style.display = "block"; // Show Stage 2 content
