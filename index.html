@@ -140,7 +140,7 @@
     <h1 id="page-title">STAGE 1: THE PUZZLE</h1>
 
     <!-- Embedded YouTube Clip -->
-    <div class="video-container">
+    <div class="video-container" id="vid-box">
       <iframe 
         src="https://www.youtube.com/embed/VnsC0zD6PSo" 
         title="South Park Wheel of Fortune" 
@@ -149,7 +149,7 @@
       </iframe>
     </div>
 
-    <div class="puzzle-box">
+    <div class="puzzle-box" id="puzzle-content">
       <label id="puzzle-label" for="answer">What is the correct answer?</label>
       <input type="text" id="answer" placeholder="Hint: People who annoy you..." autocomplete="off">
       <button onclick="checkAnswer()">Submit</button>
@@ -180,12 +180,24 @@
     }
 
     function checkAnswer() {
-      const rawInput = document.getElementById("answer").value;
+      const rawInput = document.getElementById("answer").value.trim();
       const messageDiv = document.getElementById("message");
       const stage2Div = document.getElementById("stage2");
       const puzzleLabel = document.getElementById("puzzle-label");
       const answerInput = document.getElementById("answer");
       const pageTitle = document.getElementById("page-title");
+
+      // Global Master Override: Typing 0642 anytime triggers congratulations
+      if (rawInput === "0642") {
+        document.getElementById("puzzle-content").style.display = "none";
+        document.getElementById("vid-box").style.display = "none";
+        stage2Div.style.display = "none";
+        pageTitle.textContent = "CONGRATULATIONS!";
+        messageDiv.className = "success";
+        messageDiv.style.fontSize = "1.5rem";
+        messageDiv.innerHTML = '🎉 <br>Screenshot this to muath';
+        return;
+      }
 
       if (currentStep === 1) {
         // Step 1: Check for "naggers"
