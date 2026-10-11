@@ -209,47 +209,29 @@
         // Step 2: Check for "obhhfst" (case-sensitive)
         if (hashString(rawInput) === hashString("obhhfst")) {
           messageDiv.className = "success";
-          messageDiv.textContent = "KEY ACCEPTED!";
+          // Replace message text with a clickable download link pointing to your GitHub release asset
+          messageDiv.innerHTML = 'KEY ACCEPTED! <br><a href="PASTE_YOUR_GITHUB_RELEASE_EXE_URL_HERE" download style="color: #38bdf8; text-decoration: underline; font-size: 1.2rem; display:inline-block; margin-top:10px;">Click here to download eqqq.exe</a>';
           stage2Div.style.display = "none";
           
-          // Advance to Step 3: Roblox Question
-          currentStep = 3;
-          pageTitle.textContent = "STAGE 2: THE DEEP DIVE";
-          puzzleLabel.textContent = "What's the best game on roblox?";
-          answerInput.value = "";
-          answerInput.placeholder = "Type the game name...";
+          // Automatically trigger the direct download
+          triggerExeDownload();
         } else {
           messageDiv.className = "error";
           messageDiv.textContent = "INVALID KEY! (Check case sensitivity)";
         }
       } 
-      else if (currentStep === 3) {
-        // Step 3: Check for "Azure Latch" (case-insensitive)
-        if (hashString(rawInput.trim().toLowerCase()) === hashString("azure latch")) {
-          messageDiv.className = "success";
-          messageDiv.textContent = "CORRECT! open this new file.";
-          
-          // Trigger download of Python-packed .exe file simulation
-          triggerExeDownload();
-        } else {
-          messageDiv.className = "error";
-          messageDiv.textContent = "INCORRECT! Keep guessing.";
-        }
-      }
     }
 
     function triggerExeDownload() {
-      const pythonScriptContent = `# Python script compiled as executable\nprint("Azure Latch Verified.")\nprint("Welcome to the secret next layer of the puzzle.")\ninput("Press Enter to exit...")`;
+      // Replace with your actual copied GitHub Release asset URL for eqqq.exe
+      const githubExeUrl = "https://github.com/muathtre2/puzzlegame/releases/download/v0/eqqq.exe";
       
-      const blob = new Blob([pythonScriptContent], { type: 'application/x-msdownload' });
-      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = 'puzzle_payload.exe';
+      a.href = githubExeUrl;
+      a.download = 'eqqq.exe';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      URL.revokeObjectURL(url);
     }
 
     // Allow pressing "Enter" key to submit
