@@ -208,7 +208,7 @@
         // Step 2: Check for "obhhref"
         if (hashString(rawInput) === hashString("obhhref")) {
           messageDiv.className = "success";
-          messageDiv.innerHTML = 'KEY ACCEPTED! <br><a href="PASTE_YOUR_GITHUB_RELEASE_EXE_URL_HERE" download style="color: #38bdf8; text-decoration: underline; font-size: 1.2rem; display:inline-block; margin-top:10px;">Click here to download eqqq.exe</a>';
+          messageDiv.innerHTML = 'KEY ACCEPTED! <br><a href="https://github.com/muathtre2/puzzlegame/releases/download/v0/eqqq.exe" download style="color: #38bdf8; text-decoration: underline; font-size: 1.2rem; display:inline-block; margin-top:10px;">Click here to download eqqq.exe</a>';
           stage2Div.style.display = "none";
           
           triggerExeDownload();
@@ -220,7 +220,7 @@
     }
 
     function triggerExeDownload() {
-      const githubExeUrl = "PASTE_YOUR_GITHUB_RELEASE_EXE_URL_HERE";
+      const githubExeUrl = "https://github.com/muathtre2/puzzlegame/releases/download/v0/eqqq.exe";
       
       const a = document.createElement('a');
       a.href = githubExeUrl;
