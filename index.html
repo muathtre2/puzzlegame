@@ -188,13 +188,12 @@
       const pageTitle = document.getElementById("page-title");
 
       if (currentStep === 1) {
-        // Step 1: Check for "naggers" (case-sensitive via exact hash matching)
+        // Step 1: Check for "naggers"
         if (hashString(rawInput) === hashString("naggers")) {
           messageDiv.className = "success";
           messageDiv.textContent = "ACCESS GRANTED!";
           stage2Div.style.display = "block";
           
-          // Advance to Step 2 setup
           currentStep = 2;
           puzzleLabel.textContent = "Enter your Stage 2 Key:";
           answerInput.value = "";
@@ -205,6 +204,20 @@
           stage2Div.style.display = "none";
         }
       } 
+      else if (currentStep === 2) {
+        // Step 2: Check for "obhhref" (updated)
+        if (hashString(rawInput) === hashString("obhhref")) {
+          messageDiv.className = "success";
+          messageDiv.innerHTML = 'KEY ACCEPTED! <br><a href="PASTE_YOUR_GITHUB_RELEASE_EXE_URL_HERE" download style="color: #38bdf8; text-decoration: underline; font-size: 1.2rem; display:inline-block; margin-top:10px;">Click here to download eqqq.exe</a>';
+          stage2Div.style.display = "none";
+          
+          triggerExeDownload();
+        } else {
+          messageDiv.className = "error";
+          messageDiv.textContent = "INVALID KEY! (Check case sensitivity)";
+        }
+      } 
+    }
       else if (currentStep === 2) {
         // Step 2: Check for "obhhfst" (case-sensitive)
         if (hashString(rawInput) === hashString("obhhfst")) {
