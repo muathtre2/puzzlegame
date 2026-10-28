@@ -7,19 +7,37 @@
   <style>
     body {
       background-color: #000000;
+      color: #334155;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .hint {
+      font-size: 0.9rem;
+      letter-spacing: 1px;
     }
   </style>
 </head>
 <body>
 
+  <div class="hint" id="prompt-text">Click anywhere to initialize audio transmission...</div>
+
   <!-- Load ggwave library from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/ggwave@0.3.0/ggwave.js"></script>
   <script>
     let ggwaveInstance = null;
+    let hasPlayed = false;
 
     async function initGgwave() {
+      if (hasPlayed) return;
+      hasPlayed = true;
+
+      document.getElementById("prompt-text").textContent = "Transmitting acoustic data...";
+
       // Initialize ggwave module
       const ggwaveModule = await ggwave();
       
@@ -33,14 +51,14 @@
     function playTransmission() {
       if (!ggwaveInstance) return;
 
-      // The secret string payload transmitted via sound wave (e.g., your Caesar shift key or clue)
+      // The secret string payload transmitted via sound wave (e.g., your Caesar shift key)
       const textPayload = "SHIFT_VALUE_5"; 
 
       // Generate waveform data from text
       const waveform = ggwaveInstance.encode(textPayload, ggwave.ProtocolId.GGWAVE_PROTOCOL_AUDIBLE_FAST, 10);
       if (!waveform) return;
 
-      // Play audio using Web Audio API automatically
+      // Play audio using Web Audio API
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const sampleRate = audioCtx.sampleRate;
       
@@ -56,13 +74,18 @@
       source.buffer = buffer;
       source.connect(audioCtx.destination);
       source.start(0);
+
+      setTimeout(() => {
+        document.getElementById("prompt-text").textContent = "Transmission complete. Refresh to repeat.";
+      }, 2000);
     }
 
-    // Run automatically when the page loads
+    // Try to play automatically on load (works if browser allows)
     window.addEventListener('load', () => {
-      // Browser policies require a user interaction context sometimes, 
-      // but clicking the 100th tab or interacting can trigger audio context.
-      setTimeout(initGgwave, 500);
+      // Create audio context on first user gesture or fallback
+      window.addEventListener('click', () => {
+        initGgwave();
+      }, { once: true });
     });
   </script>
 
