@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> </title>
+  <style>
+    body {
+      background-color: #000000;
+      margin: 0;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Load ggwave library from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/ggwave@0.3.0/ggwave.js"></script>
+  <script>
+    let ggwaveInstance = null;
+
+    async function initGgwave() {
+      // Initialize ggwave module
+      const ggwaveModule = await ggwave();
+      
+      // Default parameters: normal waveform quality
+      const parameters = ggwaveModule.getDefaultParameters();
+      ggwaveInstance = new ggwaveModule.GGWave(parameters);
+
+      playTransmission();
+    }
+
+    function playTransmission() {
+      if (!ggwaveInstance) return;
+
+      // The secret string payload transmitted via sound wave (e.g., your Caesar shift key or clue)
+      const textPayload = "SHIFT_VALUE_5"; 
+
+      // Generate waveform data from text
+      const waveform = ggwaveInstance.encode(textPayload, ggwave.ProtocolId.GGWAVE_PROTOCOL_AUDIBLE_FAST, 10);
+      if (!waveform) return;
+
+      // Play audio using Web Audio API automatically
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const sampleRate = audioCtx.sampleRate;
+      
+      // Create audio buffer
+      const buffer = audioCtx.createBuffer(1, waveform.length, sampleRate);
+      const channelData = buffer.getChannelData(0);
+      
+      for (let i = 0; i < waveform.length; i++) {
+        channelData[i] = waveform[i] / 128.0; // normalize 8-bit audio data
+      }
+
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioCtx.destination);
+      source.start(0);
+    }
+
+    // Run automatically when the page loads
+    window.addEventListener('load', () => {
+      // Browser policies require a user interaction context sometimes, 
+      // but clicking the 100th tab or interacting can trigger audio context.
+      setTimeout(initGgwave, 500);
+    });
+  </script>
+
+</body>
+</html>
