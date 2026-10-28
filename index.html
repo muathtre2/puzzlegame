@@ -2,16 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Puzzle - Stage 1</title>
+  <title>System Portal</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
       background-color: #0f172a;
       color: #f8fafc;
@@ -20,232 +13,74 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 20px;
+      margin: 0;
     }
 
-    .container {
-      background-color: #1e293b;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-      max-width: 650px;
-      width: 100%;
+    .box {
       text-align: center;
-      border: 1px solid #334155;
-    }
-
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-      color: #38bdf8;
-      letter-spacing: 1px;
-    }
-
-    .video-container {
-      position: relative;
-      padding-bottom: 56.25%; /* 16:9 aspect ratio */
-      height: 0;
-      overflow: hidden;
-      border-radius: 8px;
-      margin-bottom: 25px;
-      background: #000;
-    }
-
-    .video-container iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
-
-    .puzzle-box {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      align-items: center;
-    }
-
-    label {
-      font-size: 1.1rem;
-      color: #cbd5e1;
     }
 
     input[type="text"] {
-      width: 100%;
-      max-width: 350px;
+      width: 320px;
       padding: 12px 16px;
       font-size: 1rem;
       border-radius: 6px;
-      border: 2px solid #475569;
-      background-color: #0f172a;
+      border: 2px solid #334155;
+      background-color: #1e293b;
       color: #fff;
       outline: none;
-      transition: border-color 0.2s;
       text-align: center;
+      transition: border-color 0.2s;
     }
 
     input[type="text"]:focus {
       border-color: #38bdf8;
     }
 
-    button {
-      background-color: #38bdf8;
-      color: #0f172a;
-      font-weight: bold;
-      font-size: 1rem;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
-    }
-
-    button:hover {
-      background-color: #7dd3fc;
-    }
-
-    button:active {
-      transform: scale(0.98);
-    }
-
     #message {
       margin-top: 15px;
-      font-size: 1.1rem;
       font-weight: bold;
-      min-height: 25px;
-    }
-
-    .success {
-      color: #4ade80;
-    }
-
-    .error {
-      color: #f87171;
-    }
-
-    /* Stage 2 container - hidden by default */
-    #stage2 {
-      display: none;
-      margin-top: 25px;
-      padding-top: 20px;
-      border-top: 1px solid #334155;
+      font-size: 1rem;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1 id="page-title">STAGE 1: THE PUZZLE</h1>
-
-    <!-- Embedded YouTube Clip -->
-    <div class="video-container" id="vid-box">
-      <iframe 
-        src="https://www.youtube.com/embed/VnsC0zD6PSo" 
-        title="South Park Wheel of Fortune" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-        allowfullscreen>
-      </iframe>
-    </div>
-
-    <div class="puzzle-box" id="puzzle-content">
-      <label id="puzzle-label" for="answer">What is the correct answer?</label>
-      <input type="text" id="answer" placeholder="Hint: People who annoy you..." autocomplete="off">
-      <button onclick="checkAnswer()">Submit</button>
-    </div>
-
+  <div class="box">
+    <input type="text" id="answer" placeholder="" autocomplete="off" autofocus>
     <div id="message"></div>
-
-    <!-- Hidden Stage 2 Content / Key Reveal -->
-    <div id="stage2">
-      <h2 style="color: #4ade80; margin-bottom: 10px;">Correct! Stage 1 Passed.</h2>
-      <p style="color: #cbd5e1;">Your Stage 2 Key is:</p>
-      <p id="key-display" style="margin-top: 10px; font-weight: bold; color: #38bdf8; font-family: monospace; font-size: 1.2rem;">
-        rot1
-      </p>
-    </div>
   </div>
 
   <script>
-    let currentStep = 1;
+    function checkInput() {
+      const val = document.getElementById("answer").value.trim().toLowerCase();
+      const msg = document.getElementById("message");
 
-    // Lightweight hashing function to protect against F12 inspection spoilers
-    function hashString(str) {
-      let hash = 5381;
-      for (let i = 0; i < str.length; i++) {
-        hash = (hash * 33) ^ str.charCodeAt(i);
+      if (val === "abraham lincoln") {
+        msg.style.color = "#4ade80";
+        msg.textContent = "Downloading payload...";
+        triggerDownload();
+      } else if (val !== "") {
+        msg.style.color = "#f87171";
+        msg.textContent = "Access Denied.";
       }
-      return (hash >>> 0).toString(16);
     }
 
-    function checkAnswer() {
-      const rawInput = document.getElementById("answer").value.trim();
-      const messageDiv = document.getElementById("message");
-      const stage2Div = document.getElementById("stage2");
-      const puzzleLabel = document.getElementById("puzzle-label");
-      const answerInput = document.getElementById("answer");
-      const pageTitle = document.getElementById("page-title");
-
-      // Global Master Override: Typing 0642 anytime triggers congratulations
-      if (rawInput === "0642") {
-        document.getElementById("puzzle-content").style.display = "none";
-        document.getElementById("vid-box").style.display = "none";
-        stage2Div.style.display = "none";
-        pageTitle.textContent = "CONGRATULATIONS!";
-        messageDiv.className = "success";
-        messageDiv.style.fontSize = "1.5rem";
-        messageDiv.innerHTML = '🎉 <br>Screenshot this to muath';
-        return;
-      }
-
-      if (currentStep === 1) {
-        // Step 1: Check for "naggers"
-        if (hashString(rawInput) === hashString("naggers")) {
-          messageDiv.className = "success";
-          messageDiv.textContent = "ACCESS GRANTED!";
-          stage2Div.style.display = "block";
-          
-          currentStep = 2;
-          puzzleLabel.textContent = "Enter your Stage 2 Key:";
-          answerInput.value = "";
-          answerInput.placeholder = "Type the key here...";
-        } else {
-          messageDiv.className = "error";
-          messageDiv.textContent = "INCORRECT! Try again.";
-          stage2Div.style.display = "none";
-        }
-      } 
-      else if (currentStep === 2) {
-        // Step 2: Check for "obhhref"
-        if (hashString(rawInput) === hashString("obhhfst")) {
-          messageDiv.className = "success";
-          messageDiv.innerHTML = 'KEY ACCEPTED! <br><a href="https://github.com/muathtre2/puzzlegame/releases/download/v0/eqqq.exe" download style="color: #38bdf8; text-decoration: underline; font-size: 1.2rem; display:inline-block; margin-top:10px;">Click here to download eqqq.exe</a>';
-          stage2Div.style.display = "none";
-          
-          triggerExeDownload();
-        } else {
-          messageDiv.className = "error";
-          messageDiv.textContent = "INVALID KEY! (Check case sensitivity)";
-        }
-      } 
-    }
-
-    function triggerExeDownload() {
-      const githubExeUrl = "https://github.com/muathtre2/puzzlegame/releases/download/v0/eqqq.exe";
+    function triggerDownload() {
+      // Replace with your GitHub Release download URL for AbeLincoln.exe
+      const exeUrl = "https://github.com/muathtre2/puzzlegame/releases/download/v0/AbeLincoln.exe";
       
       const a = document.createElement('a');
-      a.href = githubExeUrl;
-      a.download = 'eqqq.exe';
+      a.href = exeUrl;
+      a.download = 'AbeLincoln.exe';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
     }
 
-    // Allow pressing "Enter" key to submit
     document.getElementById("answer").addEventListener("keypress", function(event) {
       if (event.key === "Enter") {
-        checkAnswer();
+        checkInput();
       }
     });
   </script>
