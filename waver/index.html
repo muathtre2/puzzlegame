@@ -24,68 +24,39 @@
 </head>
 <body>
 
-  <div class="hint" id="prompt-text">Click anywhere to initialize audio transmission...</div>
+  <div class="hint" id="prompt-text">Click anywhere to play transmission...</div>
 
-  <!-- Load ggwave library from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/ggwave@0.3.0/ggwave.js"></script>
+  <!-- Updated to point to wave.wav -->
+  <audio id="audio-player" src="wave.wav"></audio>
+
   <script>
-    let ggwaveInstance = null;
+    const audio = document.getElementById("audio-player");
+    const promptText = document.getElementById("prompt-text");
     let hasPlayed = false;
 
-    async function initGgwave() {
+    function playAudio() {
       if (hasPlayed) return;
-      hasPlayed = true;
-
-      document.getElementById("prompt-text").textContent = "Transmitting acoustic data...";
-
-      // Initialize ggwave module
-      const ggwaveModule = await ggwave();
       
-      // Default parameters: normal waveform quality
-      const parameters = ggwaveModule.getDefaultParameters();
-      ggwaveInstance = new ggwaveModule.GGWave(parameters);
-
-      playTransmission();
+      audio.play().then(() => {
+        hasPlayed = true;
+        promptText.textContent = "Transmitting acoustic data...";
+        
+        audio.onended = () => {
+          promptText.textContent = "Transmission complete. Refresh to repeat.";
+        };
+      }).catch(err => {
+        console.log("Autoplay blocked, waiting for click.");
+      });
     }
 
-    function playTransmission() {
-      if (!ggwaveInstance) return;
-
-      // The secret string payload transmitted via sound wave (e.g., your Caesar shift key)
-      const textPayload = "SHIFT_VALUE_5"; 
-
-      // Generate waveform data from text
-      const waveform = ggwaveInstance.encode(textPayload, ggwave.ProtocolId.GGWAVE_PROTOCOL_AUDIBLE_FAST, 10);
-      if (!waveform) return;
-
-      // Play audio using Web Audio API
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const sampleRate = audioCtx.sampleRate;
-      
-      // Create audio buffer
-      const buffer = audioCtx.createBuffer(1, waveform.length, sampleRate);
-      const channelData = buffer.getChannelData(0);
-      
-      for (let i = 0; i < waveform.length; i++) {
-        channelData[i] = waveform[i] / 128.0; // normalize 8-bit audio data
-      }
-
-      const source = audioCtx.createBufferSource();
-      source.buffer = buffer;
-      source.connect(audioCtx.destination);
-      source.start(0);
-
-      setTimeout(() => {
-        document.getElementById("prompt-text").textContent = "Transmission complete. Refresh to repeat.";
-      }, 2000);
-    }
-
-    // Try to play automatically on load (works if browser allows)
+    // Try playing immediately on page load
     window.addEventListener('load', () => {
-      // Create audio context on first user gesture or fallback
-      window.addEventListener('click', () => {
-        initGgwave();
-      }, { once: true });
+      playAudio();
+    });
+
+    // Fallback/Trigger on any click if browser blocks autoplay
+    window.addEventListener('click', () => {
+      playAudio();
     });
   </script>
 
