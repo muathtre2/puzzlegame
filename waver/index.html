@@ -24,7 +24,7 @@
 </head>
 <body>
 
-  <div class="hint" id="prompt-text">Click anywhere to play transmission...</div>
+  <div class="hint" id="prompt-text">CLICK.</div>
 
   <!-- Updated to point to wave.wav -->
   <audio id="audio-player" src="wave.wav"></audio>
@@ -39,10 +39,10 @@
       
       audio.play().then(() => {
         hasPlayed = true;
-        promptText.textContent = "Transmitting acoustic data...";
+        promptText.textContent = "...";
         
         audio.onended = () => {
-          promptText.textContent = "Transmission complete. Refresh to repeat.";
+          promptText.textContent = ".";
         };
       }).catch(err => {
         console.log("Autoplay blocked, waiting for click.");
